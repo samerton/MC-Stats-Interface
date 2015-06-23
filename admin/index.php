@@ -255,7 +255,7 @@ if(count($GLOBALS['servers']) == 1){
 		  <div class="well well-sm">
 			<ul class="nav nav-pills nav-stacked">
 			  <li<?php if($page === "admin-index"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/?sid=<?php echo $sid; ?>">Overview</a></li>
-			  <li<?php if($page === "admin-general"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>">Settings</a></li>
+			  <li<?php if($page === "admin-settings"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>">Settings</a></li>
 			</ul>
 		  </div>
 		</div>
@@ -270,7 +270,7 @@ if(count($GLOBALS['servers']) == 1){
 				<option value="ram" selected>Free RAM</option>
 				<option value="players" selected>Players</option>
 			  </select>
-			  <?php if(!isset($_GET['period'])){ ?><a href="./?sid=<?php echo $sid; ?>&period=all" class="btn btn-primary">All time</a><?php } else { ?><a href="./?sid=<?php echo $sid; ?>" class="btn btn-primary">Last 2 days</a><?php } ?>
+			  <?php if(!isset($_GET['period'])){ ?><a href="./?sid=<?php echo $sid; ?>&amp;period=all" class="btn btn-primary">All time</a><?php } else { ?><a href="./?sid=<?php echo $sid; ?>" class="btn btn-primary">Last 2 days</a><?php } ?>
 			</span>
 			<br /><br />
 			<p>
@@ -293,7 +293,7 @@ if(count($GLOBALS['servers']) == 1){
 			} else { 
 				if(!isset($_GET['period'])){
 			?>
-			<br /><br />No information from the last 2 days. <a href="./?sid=<?php echo $sid; ?>&period=all">View all time</a>.
+			<br /><br />No information from the last 2 days. <a href="./?sid=<?php echo $sid; ?>&amp;period=all">View all time</a>.
 			<?php 
 				} else {
 			?>
@@ -343,7 +343,7 @@ if(count($GLOBALS['servers']) == 1){
 			  <div class="well well-sm">
 				<ul class="nav nav-pills nav-stacked">
 				  <li<?php if($page === "admin-index"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/?sid=<?php echo $sid; ?>&server=<?php echo htmlspecialchars($_GET['server']); ?>">Overview</a></li>
-				  <li<?php if($page === "admin-general"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>">Settings</a></li>
+				  <li<?php if($page === "admin-settings"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>">Settings</a></li>
 				</ul>
 			  </div>
 			</div>
@@ -358,7 +358,7 @@ if(count($GLOBALS['servers']) == 1){
 					<option value="ram" selected>Free RAM</option>
 					<option value="players" selected>Players</option>
 				  </select>
-				  <?php if(!isset($_GET['period'])){ ?><a href="./?sid=<?php echo $sid; ?>&server=<?php echo htmlspecialchars($_GET['server']); ?>&period=all" class="btn btn-primary">All time</a><?php } else { ?><a href="./?sid=<?php echo $sid; ?>&server=<?php echo htmlspecialchars($_GET['server']); ?>" class="btn btn-primary">Last 2 days</a><?php } ?>
+				  <?php if(!isset($_GET['period'])){ ?><a href="./?sid=<?php echo $sid; ?>&amp;server=<?php echo htmlspecialchars($_GET['server']); ?>&amp;period=all" class="btn btn-primary">All time</a><?php } else { ?><a href="./?sid=<?php echo $sid; ?>&server=<?php echo htmlspecialchars($_GET['server']); ?>" class="btn btn-primary">Last 2 days</a><?php } ?>
 				</span>
 				<br /><br />
 				<p>
