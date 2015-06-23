@@ -131,7 +131,7 @@ if(count($GLOBALS['servers']) == 1){
 			$time_online = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes, %s seconds');
 		  ?>
 		  <tr>
-			<td><a href="../players/?p=<?php echo htmlspecialchars($item['player_name']); ?>"><?php echo htmlspecialchars($item['player_name']); ?></a></td>
+			<td><a href="../players/?p=<?php echo htmlspecialchars($item['player_name']); ?>"><img class="img-rounded" src="https://cravatar.eu/avatar/<?php echo htmlspecialchars($item['player_name']); ?>/20.png" /></a> <a href="../players/?p=<?php echo htmlspecialchars($item['player_name']); ?>"><?php echo htmlspecialchars($item['player_name']); ?></a></td>
 			<td><?php echo $time_online; ?></td>
 			<td><?php echo htmlspecialchars($item['blocks_placed']); ?></td>
 			<td><?php echo htmlspecialchars($item['blocks_broken']); ?></td>
