@@ -4,13 +4,14 @@
  *  Statistics plugin by PickNChew (http://www.spigotmc.org/members/picknchew.12729/)
  */
 
-session_start();
- 
 $path = "../";
 $page = "admin-index";
 
 // Require config
 require($path . 'inc/conf.php');
+
+// Initialise
+require($path . 'inc/init.php');
 
 // Get some variables from the config file
 $title = htmlspecialchars($GLOBALS['project_name']);
@@ -274,10 +275,11 @@ if(count($GLOBALS['servers']) == 1){
 			</span>
 			<br /><br />
 			<p>
-			<span class="label label-info">Current RAM: <?php echo $current_ram; ?>GB</span> 
+			<span class="label label-info">Current Free RAM: <?php echo $current_ram; ?>GB</span> 
 			<span class="label label-info">Current Players: <?php echo $current_players; ?></span>
 			<span class="label label-<?php
 			// which colour label?
+			if($current_tps <= 14) echo "danger"; elseif($current_tps > 14 && $current_tps < 19) echo "warning"; else echo "success";
 			?>">Current TPS: <?php echo $current_tps; ?></span>
 			</p>
 			
@@ -318,7 +320,7 @@ if(count($GLOBALS['servers']) == 1){
 		} else {  
 			foreach($Info['players']['sample'] as $player){
 	  ?>
-	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="players/?player=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
+	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="/players/?p=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
 	  <?php 
 			}
 		} 
@@ -362,10 +364,11 @@ if(count($GLOBALS['servers']) == 1){
 				</span>
 				<br /><br />
 				<p>
-				<span class="label label-info">Current RAM: <?php echo $current_ram; ?>GB</span> 
+				<span class="label label-info">Current Free RAM: <?php echo $current_ram; ?>GB</span> 
 				<span class="label label-info">Current Players: <?php echo $current_players; ?></span>
 				<span class="label label-<?php
 				// which colour label?
+				if($current_tps <= 14) echo "danger"; elseif($current_tps > 14 && $current_tps < 19) echo "warning"; else echo "success";
 				?>">Current TPS: <?php echo $current_tps; ?></span>
 				</p>
 				

@@ -16,6 +16,9 @@ $page = "home";
 // Require config
 require('inc/conf.php');
 
+// Initialise
+require('inc/init.php');
+
 // Get some variables from the config file
 $title = htmlspecialchars($GLOBALS['project_name']);
 

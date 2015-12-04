@@ -10,6 +10,9 @@ $page = "players";
 // Require config
 require($path . 'inc/conf.php');
 
+// Initialise
+require($path . 'inc/init.php');
+
 // Get some variables from the config file
 $title = htmlspecialchars($GLOBALS['project_name']);
 
@@ -30,12 +33,14 @@ require($path . 'inc/templates/header.php');
 	  <?php
 	  }
 	  if(!empty($_POST['username'])){
-		echo '<script>window.location.replace(\'' . $path . 'players/?p=' . htmlspecialchars($_POST['username']) . '\');</script>';
-		die();
+		if($_POST['token'] == $user_token){
+			echo '<script>window.location.replace(\'' . $path . 'players/?p=' . htmlspecialchars($_POST['username']) . '\');</script>';
+			die();
+		} else {
+			echo '<div class="alert alert-danger">Your form token has expired. Please try again.</div>';
+		}
 	  }
-	  // Generate token for form
-	  $token = md5(uniqid());
-	  $_SESSION['stats_token'] = $token;
+
 	  ?>
 	  <form action="" method="post">
 		<input type="text" name="username" id="username" autocomplete="off" class="form-control input-lg" placeholder="Username" tabindex="1">

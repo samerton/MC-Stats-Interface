@@ -3,14 +3,15 @@
  *  Web interface made by Samerton (https://github.com/samerton)
  *  Statistics plugin by PickNChew (http://www.spigotmc.org/members/picknchew.12729/)
  */
-
-session_start();
  
 $path = "../";
 $page = "admin-settings";
 
 // Require config
 require($path . 'inc/conf.php');
+
+// Initialise
+require($path . 'inc/init.php');
 
 // Get some variables from the config file
 $title = htmlspecialchars($GLOBALS['project_name']);

@@ -22,9 +22,16 @@
             <li<?php if($page === "leaderboards"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>leaderboards<?php if(isset($_GET['server'])){ echo '/?server=' . htmlspecialchars($_GET['server']); }?>">Leaderboards</a></li>
 			<li<?php if($page === "players"){ ?> class="active"<?php } ?>><a href="<?php echo $path; ?>players">Players</a></li>
           </ul>
-		  <form class="navbar-form navbar-right" action="<?php echo $path; ?>search" method="post">
+		  <form class="navbar-form navbar-right" action="<?php echo $path; ?>players/" method="post">
+		    <?php
+			  // Generate token for form
+			  $user_token = $_SESSION['stats_token'];
+			  $token = md5(uniqid());
+			  $_SESSION['stats_token'] = $token;
+			?>
 			<div class="form-group">
-			  <input type="text" class="form-control" placeholder="Search for a user..">
+			  <input type="text" class="form-control" name="username" placeholder="Search for a user..">
+			  <input type="hidden" name="token" value="<?php echo $token; ?>">
 			</div>
 			<button type="submit" class="btn btn-default">Submit</button>
 		  </form>
