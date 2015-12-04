@@ -52,7 +52,7 @@ require($path . 'inc/templates/header.php');
 	  } else { 
 		$statistics_array = array(); // array to store data
 		$player = htmlspecialchars($_GET['p']); // get player name from URL parameter
-		$statistics_variables = array("first_joined", "last_online", "time_online", "blocks_placed", "blocks_broken", "deaths", "kills", "balance"); // array of variables to bind to
+		$statistics_variables = array("uuid", "first_joined", "last_online", "time_online", "blocks_placed", "blocks_broken", "deaths", "kills", "balance", "results"); // array of variables to bind to
 		
 		foreach($GLOBALS['servers'] as $key => $server){
 			/*
@@ -64,8 +64,8 @@ require($path . 'inc/templates/header.php');
 				die();
 			}
 			
-			// Execute search query
-			$stmt = $mysqli->prepare("SELECT first_joined, last_online, time_online, blocks_placed, blocks_broken, deaths, kills, balance FROM statistics_players WHERE player_name = ?");
+			// Execute search query - first, normal statistics
+			$stmt = $mysqli->prepare("SELECT uuid, first_joined, last_online, time_online, blocks_placed, blocks_broken, deaths, kills, balance FROM statistics_players WHERE player_name = ?");
 			
 			$stmt->bind_param("s", $player);
 			
@@ -74,10 +74,23 @@ require($path . 'inc/templates/header.php');
 			$stmt->store_result();
 			
 			if($stmt->num_rows != 0){
-				$stmt->bind_result($first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance);
+				$stmt->bind_result($uuid, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance);
 				
 				while($stmt->fetch()){
-					$statistics_array[$key] = compact($first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance, $statistics_variables);
+					// Get extra statistics
+					$stmt_extra = $mysqli->prepare("SELECT * FROM statistics_extra WHERE uuid = ?");
+					
+					$stmt_extra->bind_param("s", $uuid);
+					
+					$stmt_extra->execute();
+					
+					$results = $stmt_extra->get_result();
+					
+					$results = $results->fetch_array();
+					
+					$stmt_extra->close();
+					
+					$statistics_array[$key] = compact($uuid, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance, $results, $statistics_variables);
 				}
 				
 				// user exists
@@ -131,7 +144,15 @@ require($path . 'inc/templates/header.php');
 			Deaths: <strong><?php echo $statistics_array[$server]['deaths']; ?></strong><br />
 			Kills: <strong><?php echo $statistics_array[$server]['kills']; ?></strong><br />
 			K/D ratio: <strong><?php if($statistics_array[$server]['deaths'] == 0){ echo $statistics_array[$server]['kills']; } else { echo round(($statistics_array[$server]['kills'] / $statistics_array[$server]['deaths']), 2); } ?></strong><br />
-			Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong>
+			Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong><br />
+			<?php
+			// Extra stats
+			foreach($statistics_array[$server]['results'] as $key => $extra){
+				if(!is_numeric($key) && $key !== 'uuid'){
+					echo ucfirst(htmlspecialchars($key)) . ': <strong>' . htmlspecialchars($extra) . '</strong><br />';
+				}
+			}
+			?>
 		  </div>
 		</div>
 		<?php
