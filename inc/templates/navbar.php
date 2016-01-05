@@ -25,7 +25,7 @@
 		  <form class="navbar-form navbar-right" action="<?php echo $path; ?>players/" method="post">
 		    <?php
 			  // Generate token for form
-			  if(isset($_SESSION['stats_token']){
+			  if(isset($_SESSION['stats_token'])){
 				  $user_token = $_SESSION['stats_token'];
 			  } else {
 				  $user_token = '';
