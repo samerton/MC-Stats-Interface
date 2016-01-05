@@ -147,9 +147,11 @@ require($path . 'inc/templates/header.php');
 			Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong><br />
 			<?php
 			// Extra stats
-			foreach($statistics_array[$server]['results'] as $key => $extra){
-				if(!is_numeric($key) && $key !== 'uuid'){
-					echo ucfirst(htmlspecialchars($key)) . ': <strong>' . htmlspecialchars($extra) . '</strong><br />';
+			if(count($statistics_array[$server]['results'])){
+				foreach($statistics_array[$server]['results'] as $key => $extra){
+					if(!is_numeric($key) && $key !== 'uuid'){
+						echo ucfirst(htmlspecialchars($key)) . ': <strong>' . htmlspecialchars($extra) . '</strong><br />';
+					}
 				}
 			}
 			?>
