@@ -108,6 +108,9 @@
 						$insert = '';
 						if(!empty($_POST['project_name'])){
 							$insert .= '$GLOBALS[\'project_name\'] = \'' . $_POST['project_name'] . '\'; // Project name' . PHP_EOL;
+							// Default stats to display
+							$insert .= '$GLOBALS[\'statistics\'] = array("first_joined", "last_online", "time_online", "blocks_placed", "blocks_broken", "deaths", "kd_ratio", "kills", "balance");' . PHP_EOL;
+							$insert .= '$GLOBALS[\'extra_statistics\'] = array();' . PHP_EOL;
 						}
 						
 						if(strpos(file_get_contents('inc/conf.php'), '$GLOBALS[\'servers\']') == false){

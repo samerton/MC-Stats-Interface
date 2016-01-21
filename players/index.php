@@ -130,21 +130,21 @@ require($path . 'inc/templates/header.php');
 			    <center><img src="https://cravatar.eu/avatar/<?php echo $player; ?>/150.png" class="img-rounded"></center>
 				<hr>
 				<center>
-				  First joined: <strong><?php echo date('d M Y', $statistics_array[$server]['first_joined']); ?></strong><br />
-				  Last online: <strong><?php echo date('d M Y', $statistics_array[$server]['last_online']); ?></strong><br />
+				  <?php if(in_array('first_joined', $GLOBALS['statistics'])){ ?>First joined: <strong><?php echo date('d M Y', $statistics_array[$server]['first_joined']); ?></strong><br /><?php } ?>
+				  <?php if(in_array('last_online', $GLOBALS['statistics'])){ ?>Last online: <strong><?php echo date('d M Y', $statistics_array[$server]['last_online']); ?></strong><br /><?php } ?>
 			    </center>
 			  </div>
 			</div>
 		  </div>
 		  <div class="col-md-8">
 		    <h3>Statistics</h3>
-			Total playtime: <strong><?php echo $time_online; ?></strong><br />
-			Blocks placed: <strong><?php echo $statistics_array[$server]['blocks_placed']; ?></strong><br />
-			Blocks broken: <strong><?php echo $statistics_array[$server]['blocks_broken']; ?></strong><br />
-			Deaths: <strong><?php echo $statistics_array[$server]['deaths']; ?></strong><br />
-			Kills: <strong><?php echo $statistics_array[$server]['kills']; ?></strong><br />
-			K/D ratio: <strong><?php if($statistics_array[$server]['deaths'] == 0){ echo $statistics_array[$server]['kills']; } else { echo round(($statistics_array[$server]['kills'] / $statistics_array[$server]['deaths']), 2); } ?></strong><br />
-			Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong><br />
+			<?php if(in_array('time_online', $GLOBALS['statistics'])){ ?>Total playtime: <strong><?php echo $time_online; ?></strong><br /><?php } ?>
+			<?php if(in_array('blocks_placed', $GLOBALS['statistics'])){ ?>Blocks placed: <strong><?php echo $statistics_array[$server]['blocks_placed']; ?></strong><br /><?php } ?>
+			<?php if(in_array('blocks_broken', $GLOBALS['statistics'])){ ?>Blocks broken: <strong><?php echo $statistics_array[$server]['blocks_broken']; ?></strong><br /><?php } ?>
+			<?php if(in_array('deaths', $GLOBALS['statistics'])){ ?>Deaths: <strong><?php echo $statistics_array[$server]['deaths']; ?></strong><br /><?php } ?>
+			<?php if(in_array('kills', $GLOBALS['statistics'])){ ?>Kills: <strong><?php echo $statistics_array[$server]['kills']; ?></strong><br /><?php } ?>
+			<?php if(in_array('kd_ratio', $GLOBALS['statistics'])){ ?>K/D ratio: <strong><?php if($statistics_array[$server]['deaths'] == 0){ echo $statistics_array[$server]['kills']; } else { echo round(($statistics_array[$server]['kills'] / $statistics_array[$server]['deaths']), 2); } ?></strong><br /><?php } ?>
+			<?php if(in_array('balance', $GLOBALS['statistics'])){ ?>Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong><br /><?php } ?>
 			<?php
 			// Extra stats
 			if(count($statistics_array[$server]['results'])){
@@ -184,8 +184,8 @@ require($path . 'inc/templates/header.php');
 			    <center><img src="https://cravatar.eu/avatar/<?php echo $player; ?>/150.png" class="img-rounded"></center>
 				<hr>
 				<center>
-				  First joined: <strong><?php echo date('d M Y', $first_joined); ?></strong><br />
-				  Last online: <strong><?php echo date('d M Y', $last_online); ?></strong><br />
+				  <?php if(in_array('first_joined', $GLOBALS['statistics'])){ ?>First joined: <strong><?php echo date('d M Y', $first_joined); ?></strong><br /><?php } ?>
+				  <?php if(in_array('last_online', $GLOBALS['statistics'])){ ?>Last online: <strong><?php echo date('d M Y', $last_online); ?></strong><br /><?php } ?>
 			    </center>
 			  </div>
 			</div>
@@ -200,14 +200,25 @@ require($path . 'inc/templates/header.php');
 				$dtT = new DateTime("@$time_online");
 				$time_online = $dtF->diff($dtT)->format('%a days, %h hours, %i minutes, %s seconds');
 			?>
-			Total playtime: <strong><?php echo $time_online; ?></strong><br />
-			Blocks placed: <strong><?php echo $statistics_array[$server]['blocks_placed']; ?></strong><br />
-			Blocks broken: <strong><?php echo $statistics_array[$server]['blocks_broken']; ?></strong><br />
-			Deaths: <strong><?php echo $statistics_array[$server]['deaths']; ?></strong><br />
-			Kills: <strong><?php echo $statistics_array[$server]['kills']; ?></strong><br />
-			K/D ratio: <strong><?php if($statistics_array[$server]['deaths'] == 0){ echo $statistics_array[$server]['kills']; } else { echo round(($statistics_array[$server]['kills'] / $statistics_array[$server]['deaths']), 2); } ?></strong><br />
-			Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong>
+			<?php if(in_array('time_online', $GLOBALS['statistics'])){ ?>Total playtime: <strong><?php echo $time_online; ?></strong><br /><?php } ?>
+			<?php if(in_array('blocks_placed', $GLOBALS['statistics'])){ ?>Blocks placed: <strong><?php echo $statistics_array[$server]['blocks_placed']; ?></strong><br /><?php } ?>
+			<?php if(in_array('blocks_broken', $GLOBALS['statistics'])){ ?>Blocks broken: <strong><?php echo $statistics_array[$server]['blocks_broken']; ?></strong><br /><?php } ?>
+			<?php if(in_array('deaths', $GLOBALS['statistics'])){ ?>Deaths: <strong><?php echo $statistics_array[$server]['deaths']; ?></strong><br /><?php } ?>
+			<?php if(in_array('kills', $GLOBALS['statistics'])){ ?>Kills: <strong><?php echo $statistics_array[$server]['kills']; ?></strong><br /><?php } ?>
+			<?php if(in_array('kd_ratio', $GLOBALS['statistics'])){ ?>K/D ratio: <strong><?php if($statistics_array[$server]['deaths'] == 0){ echo $statistics_array[$server]['kills']; } else { echo round(($statistics_array[$server]['kills'] / $statistics_array[$server]['deaths']), 2); } ?></strong><br /><?php } ?>
+			<?php if(in_array('balance', $GLOBALS['statistics'])){ ?>Balance: <strong><?php echo $statistics_array[$server]['balance']; ?></strong><br /><?php } ?>
 			<?php
+			// Extra stats
+			if(count($statistics_array[$server]['results'])){
+				foreach($statistics_array[$server]['results'] as $key => $extra){
+					if(!is_numeric($key) && $key !== 'uuid'){
+						if(in_array($key, $GLOBALS['extra_statistics'])){
+							echo ucfirst(htmlspecialchars($key)) . ': <strong>' . htmlspecialchars($extra) . '</strong><br />';
+						}
+					}
+				}
+			}
+
 			}
 			$item = null;
 			?>

@@ -58,8 +58,8 @@ if(!isset($_GET['sid'])){
 			if(!isset($_GET['action'])){ 
 				if(!empty($_POST['sitename'])){ // deal with input
 					// Check token
-					if($_SESSION['stats_token'] !== $_POST['token']){
-						echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '&amp;error=token\');</script>';
+					if($user_token !== $_POST['token']){
+						echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '&error=token\');</script>';
 						die();
 					}
 					// Valid token, edit configuration
@@ -106,9 +106,6 @@ if(!isset($_GET['sid'])){
 						echo 'Unable to write to <strong>inc/conf.php</strong>. Please ensure permissions are correctly set.';
 					}
 				}
-				// Generate token for form
-				$token = md5(uniqid());
-				$_SESSION['stats_token'] = $token;
 			?>
 		    <h3>Settings</h3>
 			<?php if(isset($_GET['error']) && $_GET['error'] == 'token'){ ?>
@@ -125,13 +122,15 @@ if(!isset($_GET['sid'])){
 			<hr>
 			<a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>&amp;action=add" class="btn btn-success">Add a server</a>
 			<a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>&amp;action=remove" class="btn btn-danger">Remove a server</a>
+			<hr>
+			<a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>&amp;action=statistics" class="btn btn-default">Configure Statistics</a>
 			<?php 
 			} else { 
 				if($_GET['action'] == 'add'){
 					if(!empty($_POST['server_name'])){
 						// Check token
-						if($_SESSION['stats_token'] !== $_POST['token']){
-							echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '&amp;action=add&amp;error=token\');</script>';
+						if($user_token !== $_POST['token']){
+							echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '&action=add&error=token\');</script>';
 							die();
 						}
 						$message = "<div class=\"alert alert-danger\">";
@@ -203,9 +202,11 @@ if(!isset($_GET['sid'])){
 
 									fclose($handle);
 									
+									// Finished, redirect
 									echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '\');</script>';
 									die();
 								} else {
+									// Unable to write to file
 									echo "Your <strong>inc/conf.php</strong> is not writable. Please check the file permissions.";
 									die();
 								}
@@ -215,9 +216,6 @@ if(!isset($_GET['sid'])){
 
 						$message .= "</div>";
 					} else {
-						// Generate token for form
-						$token = md5(uniqid());
-						$_SESSION['stats_token'] = $token;
 					?>
 					<h3>Add a server</h3>
 					<form action="" method="post">
@@ -294,6 +292,20 @@ if(!isset($_GET['sid'])){
 							}
 						}
 
+						// Stats
+						$statistics_string = '    ';
+						$extra_stats_string = '    ';
+						foreach($GLOBALS['statistics'] as $stat){
+							$statistics_string .= '"' . $stat . '", ';
+						}
+						
+						foreach($GLOBALS['extra_statistics'] as $stat){
+							$extra_stats_string .= '"' . $stat . '", ';
+						}
+						
+						$extra_stats_string = rtrim($extra_stats_string, ', ');
+						$statistics_string = rtrim($statistics_string, ', ');
+						
 						$insert = 	'<?php' . PHP_EOL .
 									'/*' . PHP_EOL .
 									' *  Web interface made by Samerton' . PHP_EOL .
@@ -306,9 +318,15 @@ if(!isset($_GET['sid'])){
 									'	\'username\' => \'' . $GLOBALS['admin']['username'] . '\', // Admin username' . PHP_EOL . 
 									'	\'password\' => \'' . $GLOBALS['admin']['password'] . '\' // Admin password - encrypted. Don\'t change it here!' . PHP_EOL . 
 									');' . PHP_EOL .
+									'$GLOBALS[\'statistics\'] = array(' . PHP_EOL .
+									$statistics_string . PHP_EOL .
+									');' . PHP_EOL .
+									'$GLOBALS[\'extra_statistics\'] = array(' . PHP_EOL .
+									$extra_stats_string . PHP_EOL .
+									');' . PHP_EOL .
 									'$GLOBALS[\'servers\'] = array(' . PHP_EOL .
 									$servers_string . PHP_EOL . 
-									');';
+									');' . PHP_EOL;
 									
 						// Write to config file			
 						if(is_writable($path . 'inc/conf.php')){
@@ -320,10 +338,204 @@ if(!isset($_GET['sid'])){
 							die();
 							
 						} else {
-							// unable to write to file
+							// Unable to write to file
 							echo 'Unable to write to <strong>inc/conf.php</strong>. Please ensure permissions are correctly set.';
 						}
 					}
+				} else if($_GET['action'] == 'statistics'){
+					// Configure which statistics will be displayed
+					if(!empty($_POST['stats']) || !empty($_POST['extra_stats'])){
+						// Check token
+						if($user_token !== $_POST['token']){
+							echo '<script>window.location.replace(\'' . $path . 'admin/settings.php?sid=' . $sid . '&action=statistics&error=token\');</script>';
+							die();
+						} else {
+							// Valid token
+							$statistics_string = '    ';
+							$extra_stats_string = '    ';
+							
+							// Normal stats
+							if(!empty($_POST['stats'])){
+								if(isset($_POST['stats_enabled'])){
+									foreach($_POST['stats_enabled'] as $stat){
+										$statistics_string .= '"' . $stat . '", ';
+									}
+								}
+							} else {
+								foreach($GLOBALS['statistics'] as $stat){
+									$statistics_string .= '"' . $stat . '", ';
+								}
+							}
+							
+							// Extra stats
+							if(!empty($_POST['extra_stats'])){
+								if(isset($_POST['extra_stats_enabled'])){
+									foreach($_POST['extra_stats_enabled'] as $stat){
+										$extra_stats_string .= '"' . $stat . '", ';
+									}
+								}
+							} else {
+								foreach($GLOBALS['extra_statistics'] as $stat){
+									$extra_stats_string .= '"' . $stat . '", ';
+								}
+							}
+							
+							$extra_stats_string = rtrim($extra_stats_string, ', ');
+							$statistics_string = rtrim($statistics_string, ', ');
+							
+							// Rewrite config
+							$servers_string = '';
+
+							foreach($GLOBALS['servers'] as $key => $item){
+								$servers_string .= 	'	\'' . $key . '\' => array(' . PHP_EOL . 
+													'		"mc_ip" => "' . $item['mc_ip'] . '", // Minecraft server IP' . PHP_EOL .
+													'		"mc_port" => "' . $item['mc_port'] . '", // Minecraft server port' . PHP_EOL .
+													'		"host" => "' . $item['host'] . '", // Database IP' . PHP_EOL .
+													'		"username" => "' . $item['username'] . '", // Database username' . PHP_EOL . 
+													'		"password" => "' . $item['password'] . '", // Database password' . PHP_EOL .
+													'		"db" => "' . $item['db'] . '" // Database name' . PHP_EOL .
+													'	),' . PHP_EOL;
+							}
+							
+							$servers_string = rtrim($servers_string, ',' . PHP_EOL);
+
+							$insert = 	'<?php' . PHP_EOL .
+										'/*' . PHP_EOL .
+										' *  Web interface made by Samerton' . PHP_EOL .
+										' *  Statistics plugin made by PickNChew' . PHP_EOL .
+										' */' . PHP_EOL .
+										'' . PHP_EOL . 
+										'// Configuration file' . PHP_EOL .
+										'$GLOBALS[\'project_name\'] = \'' . $title . '\'; // Project name' . PHP_EOL . 
+										'$GLOBALS[\'admin\'] = array(' . PHP_EOL .
+										'	\'username\' => \'' . $GLOBALS['admin']['username'] . '\', // Admin username' . PHP_EOL . 
+										'	\'password\' => \'' . $GLOBALS['admin']['password'] . '\' // Admin password - encrypted. Don\'t change it here!' . PHP_EOL . 
+										');' . PHP_EOL .
+										'$GLOBALS[\'statistics\'] = array(' . PHP_EOL .
+										$statistics_string . PHP_EOL .
+										');' . PHP_EOL .
+										'$GLOBALS[\'extra_statistics\'] = array(' . PHP_EOL .
+										$extra_stats_string . PHP_EOL .
+										');' . PHP_EOL .
+										'$GLOBALS[\'servers\'] = array(' . PHP_EOL .
+										$servers_string . PHP_EOL . 
+										');' . PHP_EOL;
+										
+							// Write to config file			
+							if(is_writable($path . 'inc/conf.php')){
+								$file = fopen($path . 'inc/conf.php','w');
+								fwrite($file, $insert);
+								fclose($file);
+
+								echo '<script>window.location.replace("' . $path . 'admin/settings.php?sid=' . $sid . '&action=statistics");</script>';
+								die();
+								
+							} else {
+								// Unable to write to file
+								echo 'Unable to write to <strong>inc/conf.php</strong>. Please ensure permissions are correctly set.';
+							}
+						}
+					}
+					
+				?>
+			<h3>Configure Statistics</h3>
+			<p>You can configure exactly which statistics you want to display on player profiles below.</p>
+		    <form action="" method="post">
+			  <?php if(isset($_GET['error']) && $_GET['error'] == 'token'){ ?>
+			  <div class="alert alert-danger">Invalid token. Please try again.</div>
+			  <?php } ?>
+			  <div class="form-group">
+				<select name="stats_enabled[]" class="form-control" multiple size=8>
+				  <option value="first_joined"<?php if(in_array("first_joined", $GLOBALS['statistics'])){ ?> selected<?php } ?>>First Joined</option>
+				  <option value="last_online"<?php if(in_array("last_online", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Last Online</option>
+				  <option value="time_online"<?php if(in_array("time_online", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Time Online</option>
+				  <option value="blocks_placed"<?php if(in_array("blocks_placed", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Blocks Placed</option>
+				  <option value="blocks_broken"<?php if(in_array("blocks_broken", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Blocks Broken</option>
+				  <option value="deaths"<?php if(in_array("deaths", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Deaths</option>
+				  <option value="kills"<?php if(in_array("kills", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Kills</option>
+				  <option value="kd_ratio"<?php if(in_array("kd_ratio", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Kill/Death Ratio</option>
+				  <option value="balance"<?php if(in_array("balance", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Balance</option>
+				</select>
+			  </div>
+			  <div class="form-group">
+			    <input type="hidden" name="stats" value="1">
+			    <input type="hidden" name="token" value="<?php echo $token; ?>">
+			    <input type="submit" value="Submit" class="btn btn-primary">
+			  </div>
+			</form>
+			<hr>
+			<h3>Extra Statistics</h3>
+			<?php
+			// How many servers have been defined
+			if(count($GLOBALS['servers']) > 1 && !isset($_GET['server'])){
+				// Multiple
+			?>
+			<strong>Select a server to continue:</strong><br />
+			<?php
+				foreach($GLOBALS['servers'] as $key => $server){
+			?>
+			<a href="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>&amp;action=statistics&amp;server=<?php echo htmlspecialchars($key); ?>"><?php echo htmlspecialchars($key); ?></a><br />
+			<?php
+				}
+
+				} else {
+					if(count($GLOBALS['servers']) > 1){
+						// Multiple, but server has been set
+						$server = $_GET['server'];
+					} else {
+						foreach($GLOBALS['servers'] as $key => $item){
+							$server = $key;
+						}
+					}
+					
+					/*
+					 *  Connect to the database
+					 */
+					$mysqli = new mysqli($GLOBALS['servers'][$server]['host'], $GLOBALS['servers'][$server]['username'], $GLOBALS['servers'][$server]['password'], $GLOBALS['servers'][$server]['db']);
+					if($mysqli->connect_errno) {
+						echo '<div class="alert alert-warning">' .  $mysqli->connect_errno . ' - ' . $mysqli->connect_error . '</div>';
+						die();
+					}
+					
+					$stmt_extra = $mysqli->prepare("SHOW columns FROM statistics_extra;");
+					
+					$stmt_extra->execute();
+					
+					$results = $stmt_extra->get_result();
+				
+					$custom_stats = array();
+				
+					while($result = $results->fetch_array()){
+						if($result['Field'] != 'uuid'){
+							$custom_stats[] = $result['Field'];
+						}
+					}
+					
+					$stmt_extra->close();
+					
+					if(!count($custom_stats)){
+						// No custom stats
+						 echo 'There are no extra statistics defined for this server.';
+					} else {
+					?>
+				<form action="<?php echo $path; ?>admin/settings.php?sid=<?php echo $sid; ?>&amp;action=statistics" method="post">
+				  <div class="form-group">
+					<select name="extra_stats_enabled[]" class="form-control" multiple size=8>
+					  <?php foreach($custom_stats as $stat){ ?>
+					  <option value="<?php echo htmlspecialchars($stat); ?>"<?php if(in_array(htmlspecialchars($stat), $GLOBALS['extra_statistics'])){ ?> selected<?php } ?>><?php echo htmlspecialchars($stat); ?></option>
+					  <?php } ?>
+					</select>
+				  </div>
+				  <div class="form-group">
+				    <input type="hidden" name="extra_stats" value="1">
+					<input type="hidden" name="token" value="<?php echo $token; ?>">
+					<input type="submit" value="Submit" class="btn btn-primary">
+				  </div>
+				</form>
+					<?php
+					}
+				}
+					
 				}
 			}
 			?>

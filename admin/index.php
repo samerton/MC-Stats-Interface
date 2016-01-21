@@ -235,13 +235,6 @@ if(count($GLOBALS['servers']) == 1){
 	<?php require($path . 'inc/templates/navbar.php'); ?>
 	
 	<div class="container">
-	  <?php if(isset($exception)){ ?>
-	  <div class="alert alert-warning">
-	    <p><strong>Exception pinging the server '<?php echo $exception_server; ?>'.</strong></p>
-		<p><?php echo $exception; ?></p>
-	  </div>
-	  <?php } ?>
-	  
 	<?php 
 	// Single server
 	if(count($GLOBALS['servers']) == 1){
@@ -399,6 +392,12 @@ if(count($GLOBALS['servers']) == 1){
 		
 		<?php } ?>
 	<?php } ?>
+	  <?php if(isset($exception)){ ?>
+	  <div class="alert alert-warning">
+	    <p><strong>Exception pinging the server '<?php echo $exception_server; ?>'.</strong></p>
+		<p><?php echo $exception; ?></p>
+	  </div>
+	  <?php } ?>
 	  <hr>
 	  <?php require($path . 'inc/templates/footer.php'); ?>
 	</div>
