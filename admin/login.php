@@ -37,7 +37,7 @@ if(isset($_POST['token'])){
 	}
 	
 	// Valid username?
-	if($_POST['username'] == $GLOBALS['admin']['username']){
+	if(strtolower($_POST['username']) == strtolower($GLOBALS['admin']['username'])){
 		// Correct username
 		
 		if(password_verify($_POST['password'], $GLOBALS['admin']['password'])){
