@@ -300,7 +300,7 @@ if(count($GLOBALS['servers']) == 1){
 		  } else {  
 			foreach($Info['players']['sample'] as $player){
 		  ?>
-	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="players/?player=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
+	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="players/?p=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
 		  <?php 
 			}
 		  } 
@@ -387,7 +387,7 @@ if(count($GLOBALS['servers']) == 1){
 		  } else {  
 			foreach($Info['players']['sample'] as $player){
 		  ?>
-	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="players/?player=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
+	    <span rel="tooltip" data-trigger="hover" data-original-title="<?php echo $player['name']; ?>"><a href="players/?p=<?php echo $player['name']; ?>"><img src="https://cravatar.eu/avatar/<?php echo $player['name']; ?>/50.png" style="width: 40px; height: 40px; margin-bottom: 5px; margin-left: 5px; border-radius: 3px;" /></a></span>
 		  <?php 
 			}
 		  } 
