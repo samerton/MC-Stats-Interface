@@ -550,6 +550,13 @@ if(!isset($_GET['sid'])){
 	<script>
 	$(document).ready(function(){
 		$("[rel=tooltip]").tooltip({ placement: 'top'});
+
+		$('option').mousedown(function(e) {
+			e.preventDefault();
+			$(this).prop('selected', !$(this).prop('selected'));
+			return false;
+		});	
+
 	});
 	</script>
   </body>
