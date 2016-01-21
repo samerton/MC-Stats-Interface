@@ -52,7 +52,7 @@ require($path . 'inc/templates/header.php');
 	  } else { 
 		$statistics_array = array(); // array to store data
 		$player = htmlspecialchars($_GET['p']); // get player name from URL parameter
-		$statistics_variables = array("uuid", "first_joined", "last_online", "time_online", "blocks_placed", "blocks_broken", "deaths", "kills", "balance", "results"); // array of variables to bind to
+		$statistics_variables = array("uuid", "player_name", "first_joined", "last_online", "time_online", "blocks_placed", "blocks_broken", "deaths", "kills", "balance", "results"); // array of variables to bind to
 		
 		foreach($GLOBALS['servers'] as $key => $server){
 			/*
@@ -65,7 +65,7 @@ require($path . 'inc/templates/header.php');
 			}
 			
 			// Execute search query - first, normal statistics
-			$stmt = $mysqli->prepare("SELECT uuid, first_joined, last_online, time_online, blocks_placed, blocks_broken, deaths, kills, balance FROM statistics_players WHERE player_name = ?");
+			$stmt = $mysqli->prepare("SELECT uuid, player_name, first_joined, last_online, time_online, blocks_placed, blocks_broken, deaths, kills, balance FROM statistics_players WHERE player_name = ?");
 			
 			$stmt->bind_param("s", $player);
 			
@@ -74,7 +74,7 @@ require($path . 'inc/templates/header.php');
 			$stmt->store_result();
 			
 			if($stmt->num_rows != 0){
-				$stmt->bind_result($uuid, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance);
+				$stmt->bind_result($uuid, $player_name, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance);
 				
 				while($stmt->fetch()){
 					// Get extra statistics
@@ -90,7 +90,7 @@ require($path . 'inc/templates/header.php');
 					
 					$stmt_extra->close();
 					
-					$statistics_array[$key] = compact($uuid, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance, $results, $statistics_variables);
+					$statistics_array[$key] = compact($uuid, $player_name, $first_joined, $last_online, $time_online, $blocks_placed, $blocks_broken, $deaths, $kills, $balance, $results, $statistics_variables);
 				}
 				
 				// user exists
@@ -101,6 +101,8 @@ require($path . 'inc/templates/header.php');
 			$stmt->close();
 			$mysqli->close();
 		}
+
+		$player = htmlspecialchars($statistics_array[$key]['player_name']);
 		
 		if($exists == true){
 			// exists
