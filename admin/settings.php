@@ -445,7 +445,7 @@ if(!isset($_GET['sid'])){
 			  <div class="alert alert-danger">Invalid token. Please try again.</div>
 			  <?php } ?>
 			  <div class="form-group">
-				<select name="stats_enabled[]" class="form-control" multiple size=8>
+				<select name="stats_enabled[]" class="form-control" multiple size=9>
 				  <option value="first_joined"<?php if(in_array("first_joined", $GLOBALS['statistics'])){ ?> selected<?php } ?>>First Joined</option>
 				  <option value="last_online"<?php if(in_array("last_online", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Last Online</option>
 				  <option value="time_online"<?php if(in_array("time_online", $GLOBALS['statistics'])){ ?> selected<?php } ?>>Time Online</option>
@@ -551,11 +551,17 @@ if(!isset($_GET['sid'])){
 	$(document).ready(function(){
 		$("[rel=tooltip]").tooltip({ placement: 'top'});
 
-		$('option').mousedown(function(e) {
+		$("select").mousedown(function(e){
 			e.preventDefault();
-			$(this).prop('selected', !$(this).prop('selected'));
-			return false;
-		});	
+
+			var scroll = this.scrollTop;
+
+			e.target.selected = !e.target.selected;
+
+			this.scrollTop = scroll;
+
+			$(this).focus();
+		}).mousemove(function(e){e.preventDefault()});
 
 	});
 	</script>
