@@ -9,6 +9,8 @@ if(file_exists('install.php')){
 	die();
 }
  
+// Temporary: set timezone manually
+date_default_timezone_set('UTC');
  
 $path = "./";
 $page = "home";
